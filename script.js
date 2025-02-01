@@ -1,30 +1,29 @@
 const API_KEY = "d5f6c8aa6c798ad4be98bb73e7041a87";
 
-function getWeather() {
+async function getWeather() {
   let city = document.getElementById("cityInput").value.trim();
   if (!city) {
     alert("Please enter a city name.");
     return;
   }
 
-  fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
-  )
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("City not found.");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      displayWeather(data);
-    })
-    .catch((error) => {
-      console.error("Error fetching weather:", error);
-      document.getElementById(
-        "weatherDetails"
-      ).innerHTML = `<p class="text-danger">${error.message}</p>`;
-    });
+  try {
+    let response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error("City not found.");
+    }
+
+    let data = await response.json();
+    displayWeather(data);
+  } catch (error) {
+    console.error("Error fetching weather:", error);
+    document.getElementById(
+      "weatherDetails"
+    ).innerHTML = `<p class="text-danger">${error.message}</p>`;
+  }
 }
 
 function displayWeather(data) {
