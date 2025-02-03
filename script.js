@@ -4,7 +4,7 @@ let temperatureChart = null;
 var citiesList = [];
 
 document.getElementById("cityInput").addEventListener("input", function () {
-  let query = this.value.trim();
+  let query = this.value.split(",").pop().trim();
   // Only search if at least 2 characters
   if (query.length < 2) return;
 
@@ -33,29 +33,18 @@ document.getElementById("clearBtn").addEventListener("click", clearWeatherData);
 
 // Function to select a city and fetch weather
 function selectCity(city) {
-  const cityInput = document.getElementById("cityInput");
-  if (cityInput.value.trim() !== "") {
-    cityInput.value += ` ${city.name}`;
-  } else {
-    cityInput.value = city.name;
-  }
-  document.getElementById("cityDropdown").style.display = "none"; // Hide dropdown after selection
-
-  // Refocus on the input field
-  cityInput.focus();
-  
-  // Move cursor to the end of the input
-  cityInput.setSelectionRange(cityInput.value.length, cityInput.value.length);
+  let input = document.getElementById("cityInput");
+  let cities = input.value.split(","); // Get all cities
+  cities[cities.length - 1] = `${city.name}`; // Replace last typed city
+  input.value = cities.join(", ");
+  input.focus();
+  document.getElementById("cityDropdown").style.display = "none"; // Hide dropdown
 }
 
 async function getWeather() {
-  document.getElementById("cityDropdown").style.display = "none"; // Hide dropdown 
+  document.getElementById("cityDropdown").style.display = "none"; // Hide dropdown
   let cities = document.getElementById("cityInput").value.trim();
 
-  // if (citiesList.length === 0) {
-  //   alert("Please enter a city name.");
-  //   return;
-  // }
   if (!cities) {
     alert("Please enter a city name.");
     return;

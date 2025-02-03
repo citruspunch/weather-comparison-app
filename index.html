@@ -27,6 +27,19 @@
           Search
         </button>
       </div>
+      <!-- Dropdown menu for suggestions -->
+      <div
+        id="cityDropdown"
+        class="dropdown-menu"
+        style="position: absolute; z-index: 10"
+      ></div>
+      <button
+        onclick="clearScreen()"
+        class="btn btn-outline-danger"
+        id="clearBtn"
+      >
+        clear
+      </button>
       <ul id="cityList" class="list-group"></ul>
       <div id="weatherDetails" class="mt-3"></div>
       <canvas id="temperatureChart"></canvas>
