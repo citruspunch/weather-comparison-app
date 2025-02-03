@@ -1,9 +1,61 @@
 const API_KEY = "d5f6c8aa6c798ad4be98bb73e7041a87";
 
 let temperatureChart = null;
+var citiesList = [];
+
+document.getElementById("cityInput").addEventListener("input", function () {
+  let query = this.value.trim();
+  // Only search if at least 2 characters
+  if (query.length < 2) return;
+
+  fetch(
+    `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      let dropdownMenu = document.getElementById("cityDropdown");
+      // Clear previous suggestions
+      dropdownMenu.innerHTML = "";
+
+      data.forEach((city) => {
+        let option = document.createElement("div");
+        option.className = "dropdown-item";
+        option.textContent = `${city.name}, ${city.country}`;
+        option.onclick = () => selectCity(city);
+        dropdownMenu.appendChild(option);
+      });
+
+      dropdownMenu.style.display = data.length > 0 ? "block" : "none"; // Show only if results exist
+    })
+    .catch((error) => console.error("Error fetching cities:", error));
+});
+document.getElementById("clearBtn").addEventListener("click", clearWeatherData);
+
+// Function to select a city and fetch weather
+function selectCity(city) {
+  const cityInput = document.getElementById("cityInput");
+  if (cityInput.value.trim() !== "") {
+    cityInput.value += ` ${city.name}`;
+  } else {
+    cityInput.value = city.name;
+  }
+  document.getElementById("cityDropdown").style.display = "none"; // Hide dropdown after selection
+
+  // Refocus on the input field
+  cityInput.focus();
+  
+  // Move cursor to the end of the input
+  cityInput.setSelectionRange(cityInput.value.length, cityInput.value.length);
+}
 
 async function getWeather() {
+  document.getElementById("cityDropdown").style.display = "none"; // Hide dropdown 
   let cities = document.getElementById("cityInput").value.trim();
+
+  // if (citiesList.length === 0) {
+  //   alert("Please enter a city name.");
+  //   return;
+  // }
   if (!cities) {
     alert("Please enter a city name.");
     return;
@@ -57,6 +109,7 @@ function displayWeather(dataArray) {
     }
   });
 }
+
 function updateChart(weatherData) {
   const cityNames = weatherData.map((city) =>
     city.error ? city.city + " ❌" : city.name
@@ -90,9 +143,21 @@ function updateChart(weatherData) {
       responsive: true,
       scales: {
         y: {
-          beginAtZero: false,
+          beginAtZero: true,
         },
       },
     },
   });
+}
+
+function clearWeatherData() {
+  citiesList = []; // Clear the stored cities
+  document.getElementById("weatherDetails").innerHTML = ""; // Clear the displayed weather
+  document.getElementById("cityInput").value = ""; // Reset the input field
+
+  // Destroy the chart if it exists
+  if (temperatureChart) {
+    temperatureChart.destroy();
+    temperatureChart = null;
+  }
 }
