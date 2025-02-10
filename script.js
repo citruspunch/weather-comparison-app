@@ -31,6 +31,16 @@ document.getElementById("cityInput").addEventListener("input", function () {
 });
 document.getElementById("clearBtn").addEventListener("click", clearWeatherData);
 
+// Load Lottie animation
+lottie.loadAnimation({
+  container: document.getElementById("weatherAnimation"), // The div where animation will play
+  renderer: "svg",
+  loop: true,
+  autoplay: true,
+  path: "https://assets4.lottiefiles.com/packages/lf20_x62chJ.json" 
+});
+
+
 // Function to select a city and fetch weather
 function selectCity(city) {
   let input = document.getElementById("cityInput");
